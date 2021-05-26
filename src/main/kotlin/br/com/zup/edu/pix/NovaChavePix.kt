@@ -1,13 +1,14 @@
 package br.com.zup.edu.pix
 
-import br.com.zup.edu.TipoChave
-import br.com.zup.edu.TipoConta
+
+import br.com.zup.edu.shared.annotations.ValidChavePix
 import io.micronaut.core.annotation.Introspected
 import java.util.*
 import javax.validation.constraints.NotBlank
 import javax.validation.constraints.NotNull
 import javax.validation.constraints.Size
 
+@ValidChavePix
 @Introspected
 data class NovaChavePix(
     @field:NotBlank

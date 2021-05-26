@@ -3,6 +3,7 @@ package br.com.zup.edu.pix
 import br.com.zup.edu.shared.exceptions.ChavePixExistenteException
 import br.com.zup.edu.integrations.ContasDeClientesNoItauClient
 import io.micronaut.validation.Validated
+import java.util.*
 import javax.inject.Inject
 import javax.inject.Singleton
 import javax.transaction.Transactional
@@ -18,9 +19,10 @@ class NovaChaveService(@Inject val repository: ChavePixRepository,
     @Transactional
     fun registra(@Valid novaChave: NovaChavePix): ChavePix {
 
-        //1.Valida se a conta existe no banco
-        if (repository.existsByChave(novaChave.chave)) {
-            throw ChavePixExistenteException("Chave Pix '${novaChave.chave} existente")
+        //1.Valida se a chave informada existe no sistema
+        if (repository.existsByChave(novaChave.chave) ||
+            repository.existsByClienteId(UUID.fromString(novaChave.clienteId))) {
+            throw ChavePixExistenteException("Chave Pix '${novaChave.chave}' existente")
         }
 
         //2.Busca dados da conta no ERP do Itau
