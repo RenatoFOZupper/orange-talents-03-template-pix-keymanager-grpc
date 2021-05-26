@@ -1,23 +1,24 @@
 syntax = "proto3";
 
 option java_multiple_files = true;
-option java_package = "br.com.zup.edu";
+option java_outer_classname = "KeymanagerGrpc";
 
 package br.com.zup.edu;
 
-service ChavePixService {
-  rpc cadastrar (NovaChavePixRequest) returns (NovaChavePixResponse) {}
+service KeymanagerGrpcService {
+  rpc registra (RegistraChavePixRequest) returns (RegistraChavePixResponse) {}
 }
 
-message NovaChavePixRequest {
-  string idErpItau = 1;
+message RegistraChavePixRequest {
+  string clientId = 1;
   TipoChave tipoChave = 2;
-  string valorChave = 3;
+  string chave = 3;
   TipoConta tipoConta = 4;
 }
 
-message NovaChavePixResponse {
-  string pixId = 1;
+message RegistraChavePixResponse {
+  string clientId = 1;
+  string pixId = 2;
 }
 
 enum TipoChave {
