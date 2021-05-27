@@ -29,7 +29,6 @@ class ExceptionHandlerInterceptor : MethodInterceptor<ChavePixEndpoint, Any?> {
         try {
             return context.proceed() // processa o metodo interceptado
         } catch (e: Exception) {
-
             val error = when(e) {
                 is IllegalArgumentException -> Status.INVALID_ARGUMENT.withDescription(e.message).asRuntimeException()
                 is IllegalStateException -> Status.FAILED_PRECONDITION.withDescription(e.message).asRuntimeException()
@@ -51,8 +50,8 @@ class ExceptionHandlerInterceptor : MethodInterceptor<ChavePixEndpoint, Any?> {
         val details = BadRequest.newBuilder()
             .addAllFieldViolations(e.constraintViolations.map {
                 BadRequest.FieldViolation.newBuilder()
-                    .setField(it.propertyPath.last().name) //save.entity.document
-                    .setDescription(it.message) //must be blank
+                    .setField(it.propertyPath.first().name) //save.entity.document
+                    .setDescription(e.message) //must be blank
                     .build()
             })
             .build() // cria lista de violations
