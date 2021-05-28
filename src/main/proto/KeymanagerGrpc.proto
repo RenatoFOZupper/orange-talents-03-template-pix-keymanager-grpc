@@ -5,8 +5,12 @@ option java_outer_classname = "KeymanagerGrpc";
 
 package br.com.zup.edu;
 
-service KeymanagerGrpcService {
+service KeymanagerRegisterGrpcService {
   rpc registra (RegistraChavePixRequest) returns (RegistraChavePixResponse) {}
+}
+
+service KeymanagerRemoveGrpcService {
+  rpc deleta (DeletaChavePixRequest) returns (DeletaChavePixResponse) {}
 }
 
 message RegistraChavePixRequest {
@@ -19,6 +23,15 @@ message RegistraChavePixRequest {
 message RegistraChavePixResponse {
   string clientId = 1;
   string pixId = 2;
+}
+
+message DeletaChavePixRequest {
+  string pixId = 1;
+  string clientId = 2;
+}
+
+message DeletaChavePixResponse {
+  string messagem = 1;
 }
 
 enum TipoChave {

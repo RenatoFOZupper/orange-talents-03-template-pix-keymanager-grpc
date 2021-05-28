@@ -1,7 +1,7 @@
 package br.com.zup.edu.shared.exceptions
 
 import br.com.zup.edu.shared.annotations.ErrorHandler
-import br.com.zup.edu.pix.ChavePixEndpoint
+import br.com.zup.edu.pix.registra.NovaChavePixEndpoint
 import com.google.rpc.BadRequest
 import com.google.rpc.Code
 import io.grpc.Status
@@ -12,17 +12,16 @@ import io.micronaut.aop.InterceptorBean
 import io.micronaut.aop.MethodInterceptor
 import io.micronaut.aop.MethodInvocationContext
 import org.slf4j.LoggerFactory
-import java.lang.NullPointerException
 import javax.inject.Singleton
 import javax.validation.ConstraintViolationException
 
 @Singleton
 @InterceptorBean(ErrorHandler::class)
-class ExceptionHandlerInterceptor : MethodInterceptor<ChavePixEndpoint, Any?> {
+class ExceptionHandlerInterceptor : MethodInterceptor<NovaChavePixEndpoint, Any?> {
 
     val LOGGER = LoggerFactory.getLogger(this.javaClass)
 
-    override fun intercept(context: MethodInvocationContext<ChavePixEndpoint, Any?>): Any? {
+    override fun intercept(context: MethodInvocationContext<NovaChavePixEndpoint, Any?>): Any? {
         //antes
         LOGGER.info("Intercepting method: ${context.targetMethod}")
 
@@ -30,11 +29,15 @@ class ExceptionHandlerInterceptor : MethodInterceptor<ChavePixEndpoint, Any?> {
             return context.proceed() // processa o metodo interceptado
         } catch (e: Exception) {
             val error = when(e) {
-                is IllegalArgumentException -> Status.INVALID_ARGUMENT.withDescription(e.message).asRuntimeException()
-                is IllegalStateException -> Status.FAILED_PRECONDITION.withDescription(e.message).asRuntimeException()
-                is ChavePixExistenteException -> Status.ALREADY_EXISTS.withDescription(e.message).asRuntimeException()
+                is IllegalArgumentException -> Status.INVALID_ARGUMENT.withDescription(e.message)
+                                                                            .withCause(e.cause).asRuntimeException()
+                is IllegalStateException -> Status.FAILED_PRECONDITION.withDescription(e.message)
+                                                                            .withCause(e.cause).asRuntimeException()
+                is ChavePixExistenteException -> Status.ALREADY_EXISTS.withDescription(e.message)
+                                                                            .withCause(e.cause).asRuntimeException()
                 is ConstraintViolationException -> HandleConstraintViolationException(e)
-                else -> Status.UNKNOWN.withDescription("unexpected error happened").asRuntimeException()
+                else -> Status.UNKNOWN.withDescription("unexpected error happened")
+                                                                            .withCause(e.cause).asRuntimeException()
             }
 
             val responseObserver = context.parameterValues[1] as StreamObserver<*>

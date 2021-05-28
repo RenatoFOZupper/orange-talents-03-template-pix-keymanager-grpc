@@ -1,6 +1,6 @@
 package br.com.zup.edu.pix
 
-import br.com.zup.edu.KeymanagerGrpcServiceGrpc
+import br.com.zup.edu.KeymanagerRegisterGrpcServiceGrpc
 import br.com.zup.edu.RegistraChavePixRequest
 import br.com.zup.edu.TipoChave
 import br.com.zup.edu.TipoConta
@@ -24,8 +24,8 @@ import javax.inject.Inject
 import javax.inject.Singleton
 
 @MicronautTest(transactional = false)
-internal class ChavePixEndpointTest(
-    @Inject val grpcClient: KeymanagerGrpcServiceGrpc.KeymanagerGrpcServiceBlockingStub) {
+internal class NovaChavePixEndpointTest(
+    @Inject val grpcClient: KeymanagerRegisterGrpcServiceGrpc.KeymanagerRegisterGrpcServiceBlockingStub) {
 
     /*
     * Cenarios de testes:
@@ -163,8 +163,8 @@ internal class ChavePixEndpointTest(
     class ClientsFactory {
 
         @Singleton
-        fun stub(@GrpcChannel(GrpcServerChannel.NAME)channel: Channel) : KeymanagerGrpcServiceGrpc.KeymanagerGrpcServiceBlockingStub? {
-            return KeymanagerGrpcServiceGrpc.newBlockingStub(channel)
+        fun stub(@GrpcChannel(GrpcServerChannel.NAME)channel: Channel) : KeymanagerRegisterGrpcServiceGrpc.KeymanagerRegisterGrpcServiceBlockingStub? {
+            return KeymanagerRegisterGrpcServiceGrpc.newBlockingStub(channel)
         }
 
     }

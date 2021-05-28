@@ -1,6 +1,10 @@
-package br.com.zup.edu.pix
+package br.com.zup.edu.pix.registra
 
 
+import br.com.zup.edu.pix.ChavePix
+import br.com.zup.edu.pix.ContaAssociada
+import br.com.zup.edu.pix.TipoChave
+import br.com.zup.edu.pix.TipoConta
 import br.com.zup.edu.shared.annotations.ValidChavePix
 import io.micronaut.core.annotation.Introspected
 import java.util.*

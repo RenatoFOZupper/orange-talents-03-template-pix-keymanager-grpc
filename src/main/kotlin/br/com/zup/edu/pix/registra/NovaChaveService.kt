@@ -1,7 +1,9 @@
-package br.com.zup.edu.pix
+package br.com.zup.edu.pix.registra
 
 import br.com.zup.edu.shared.exceptions.ChavePixExistenteException
 import br.com.zup.edu.integrations.ContasDeClientesNoItauClient
+import br.com.zup.edu.pix.ChavePix
+import br.com.zup.edu.pix.ChavePixRepository
 import io.micronaut.validation.Validated
 import java.util.*
 import javax.inject.Inject

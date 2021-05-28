@@ -1,6 +1,6 @@
 package br.com.zup.edu.shared.annotations
 
-import br.com.zup.edu.pix.NovaChavePix
+import br.com.zup.edu.pix.registra.NovaChavePix
 import javax.inject.Singleton
 import javax.validation.Constraint
 import javax.validation.ConstraintValidator

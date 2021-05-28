@@ -1,8 +1,9 @@
-package br.com.zup.edu.pix
+package br.com.zup.edu.pix.registra
 
-import br.com.zup.edu.KeymanagerGrpcServiceGrpc
+import br.com.zup.edu.KeymanagerRegisterGrpcServiceGrpc
 import br.com.zup.edu.RegistraChavePixRequest
 import br.com.zup.edu.RegistraChavePixResponse
+import br.com.zup.edu.pix.toModel
 import br.com.zup.edu.shared.annotations.ErrorHandler
 import io.grpc.stub.StreamObserver
 import javax.inject.Inject
@@ -10,7 +11,7 @@ import javax.inject.Singleton
 
 @ErrorHandler
 @Singleton
-class ChavePixEndpoint(@Inject val novaChaveService: NovaChaveService) : KeymanagerGrpcServiceGrpc.KeymanagerGrpcServiceImplBase() {
+class NovaChavePixEndpoint(@Inject val novaChaveService: NovaChaveService) : KeymanagerRegisterGrpcServiceGrpc.KeymanagerRegisterGrpcServiceImplBase() {
 
     override fun registra(
         request: RegistraChavePixRequest,
