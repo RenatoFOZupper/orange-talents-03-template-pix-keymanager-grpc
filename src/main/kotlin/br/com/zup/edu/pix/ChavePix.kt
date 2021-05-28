@@ -9,7 +9,7 @@ import javax.validation.constraints.NotNull
 @Entity
 @Table(uniqueConstraints = [UniqueConstraint(
     name = "uk_chave_pix",
-    columnNames = ["chave"]
+    columnNames = ["chave"],
 )])
 class ChavePix(
     @field:NotNull
@@ -31,7 +31,6 @@ class ChavePix(
     val tipoConta: TipoConta,
 
     @Embedded
-    @Column(nullable = false)
     val conta: ContaAssociada
 ) {
 

@@ -31,7 +31,6 @@ class NovaChaveService(@Inject val repository: ChavePixRepository,
 
         //3.Grava no db
         val chave = novaChave.toModel(conta)
-
         repository.save(chave)
 
         return chave
