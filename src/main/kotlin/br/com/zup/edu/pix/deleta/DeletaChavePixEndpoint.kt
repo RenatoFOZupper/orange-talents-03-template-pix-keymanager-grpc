@@ -16,11 +16,13 @@ class DeletaChavePixEndpoint(@Inject val service: DeletaChavePixService):
 
     override fun deleta(request: DeletaChavePixRequest, responseObserver: StreamObserver<DeletaChavePixResponse>) {
 
+        //1. Recebe um RequestGrpc e converte para o DeletaChavePix
         val deletaChavePix = request.toDelete()
 
-
+        //3. Chama a classe DeletaChavePixService que contém toda lógica de validação e exclusão no banco
         service.deleta(deletaChavePix)
 
+        //3. Retorna um objeto de reposta com a confirmação de exclusão
         responseObserver.onNext(DeletaChavePixResponse.newBuilder()
                                                     .setMessagem("Chave ${request.pixId} excluída com sucesso!")
                                                     .build()
