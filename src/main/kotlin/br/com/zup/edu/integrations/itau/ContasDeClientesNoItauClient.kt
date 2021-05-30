@@ -1,7 +1,5 @@
-package br.com.zup.edu.integrations
+package br.com.zup.edu.integrations.itau
 
-import br.com.zup.edu.pix.DadosDaContaResponse
-import br.com.zup.edu.pix.TipoConta
 import io.micronaut.http.HttpResponse
 import io.micronaut.http.annotation.Get
 import io.micronaut.http.annotation.PathVariable

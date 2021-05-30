@@ -1,14 +1,12 @@
 package br.com.zup.edu.pix.deleta
 
-import br.com.zup.edu.integrations.ContasDeClientesNoItauClient
+import br.com.zup.edu.integrations.itau.ContasDeClientesNoItauClient
 import br.com.zup.edu.pix.ChavePixRepository
 import io.grpc.Status
 
 
 import io.grpc.StatusRuntimeException
 import org.slf4j.LoggerFactory
-import java.lang.IllegalStateException
-import java.lang.RuntimeException
 
 import java.util.*
 import javax.inject.Inject

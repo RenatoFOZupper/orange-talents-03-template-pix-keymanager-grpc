@@ -1,12 +1,12 @@
 package br.com.zup.edu.pix.deleta
 
 import br.com.zup.edu.DeletaChavePixRequest
-import br.com.zup.edu.KeymanagerRegisterGrpcServiceGrpc
 import br.com.zup.edu.KeymanagerRemoveGrpcServiceGrpc
-import br.com.zup.edu.RegistraChavePixRequest
-import br.com.zup.edu.integrations.ContasDeClientesNoItauClient
+import br.com.zup.edu.integrations.itau.ContasDeClientesNoItauClient
+import br.com.zup.edu.integrations.itau.DadosDaContaResponse
+import br.com.zup.edu.integrations.itau.InstituicaoResponse
+import br.com.zup.edu.integrations.itau.TitularResponse
 import br.com.zup.edu.pix.*
-import br.com.zup.edu.pix.registra.NovaChavePixEndpointTest
 import io.grpc.Channel
 import io.grpc.Status
 import io.grpc.StatusRuntimeException
