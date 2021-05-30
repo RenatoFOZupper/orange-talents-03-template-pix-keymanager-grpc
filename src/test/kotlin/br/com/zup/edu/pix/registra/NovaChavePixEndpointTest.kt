@@ -1,10 +1,11 @@
-package br.com.zup.edu.pix
+package br.com.zup.edu.pix.registra
 
 import br.com.zup.edu.KeymanagerRegisterGrpcServiceGrpc
 import br.com.zup.edu.RegistraChavePixRequest
 import br.com.zup.edu.TipoChave
 import br.com.zup.edu.TipoConta
 import br.com.zup.edu.integrations.ContasDeClientesNoItauClient
+import br.com.zup.edu.pix.*
 import io.grpc.Channel
 import io.grpc.Status
 import io.grpc.StatusRuntimeException
@@ -110,7 +111,8 @@ internal class NovaChavePixEndpointTest(
     fun `deve retornar uma AlreadyExistsException para uma chave ja cadastrada`() {
 
         //cenario
-        repository.save(ChavePix(
+        repository.save(
+            ChavePix(
             clienteId = CLIENTE_ID,
             tipoChave = br.com.zup.edu.pix.TipoChave.CPF,
             chave = "02467781054",
@@ -122,7 +124,8 @@ internal class NovaChavePixEndpointTest(
                 nomeDoTitular = "Rafael M C Ponte",
                 cpfDoTitular = "02467781054"
             )
-        ))
+        )
+        )
 
         //acao
         val response = assertThrows<StatusRuntimeException> {
