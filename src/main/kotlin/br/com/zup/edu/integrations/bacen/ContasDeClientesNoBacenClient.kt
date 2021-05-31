@@ -1,12 +1,8 @@
 package br.com.zup.edu.integrations.bacen
 
 import br.com.zup.edu.pix.TipoChave
-import br.com.zup.edu.pix.TipoConta
 import io.micronaut.core.annotation.Introspected
-import io.micronaut.http.HttpResponse
 import io.micronaut.http.MediaType.APPLICATION_XML
-
-
 import io.micronaut.http.annotation.*
 import io.micronaut.http.client.annotation.Client
 import javax.persistence.EnumType
@@ -24,7 +20,23 @@ interface ContasDeClientesNoBacenClient {
     @Post("/api/v1/pix/keys")
     fun registraNovaChavePix(@Body request: CreatePixKeyRequest): CreatePixKeyResponse
 
+    @Delete("/api/v1/pix/keys/{key}")
+    fun deletaChavePix(@PathVariable key: String, @Body request: DeletePixKeyRequest) : DeletePixKeyResponse
+
 }
+
+@Introspected
+data class DeletePixKeyRequest(
+    val key: String,
+    val participant: String = "60701190"
+)
+
+@Introspected
+data class DeletePixKeyResponse(
+    val key: String,
+    val participant: String,
+    val deletedAt: String
+)
 
 @Introspected
 data class CreatePixKeyRequest(
