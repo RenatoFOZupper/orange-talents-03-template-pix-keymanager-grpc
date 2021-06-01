@@ -1,4 +1,4 @@
-package br.com.zup.edu.integrations.itau
+package br.com.zup.edu.integrations.itau.responses
 
 import br.com.zup.edu.pix.ContaAssociada
 
@@ -21,11 +21,5 @@ data class DadosDaContaResponse(
 
 }
 
-data class InstituicaoResponse(
-    val nome: String,
-    val ispb: String
-)
-data class TitularResponse(
-    val nome: String,
-    val cpf: String
-)
+
+

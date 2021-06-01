@@ -1,5 +1,6 @@
 package br.com.zup.edu.pix
 
+import br.com.zup.edu.integrations.bacen.TipoChaveBacen
 import org.hibernate.validator.internal.constraintvalidators.hv.br.CPFValidator
 
 enum class TipoChave {
@@ -15,6 +16,10 @@ enum class TipoChave {
                 }
             }
         }
+
+        override fun converte(): TipoChaveBacen {
+            return TipoChaveBacen.CPF
+        }
     },
     CELULAR {
         override fun valida(chave: String?): Boolean {
@@ -22,6 +27,10 @@ enum class TipoChave {
                 chave.isNullOrBlank() -> false
                 else -> chave.matches("^\\+[1-9][0-9]\\d{1,14}\$".toRegex())
             }
+        }
+
+        override fun converte(): TipoChaveBacen {
+            return TipoChaveBacen.PHONE
         }
     },
     EMAIL {
@@ -37,12 +46,22 @@ enum class TipoChave {
                             "\\x0b\\x0c\\x0e-\\x7f])+)\\])").toRegex())
             }
         }
+
+        override fun converte(): TipoChaveBacen {
+            return TipoChaveBacen.EMAIL
+        }
     },
     CHAVE_ALEATORIA {
         override fun valida(chave: String?): Boolean {
             return chave.isNullOrBlank()
         }
+
+        override fun converte(): TipoChaveBacen {
+            return TipoChaveBacen.RANDOM
+        }
     };
 
     abstract fun valida(chave: String?) : Boolean
+
+    abstract fun converte(): TipoChaveBacen
 }

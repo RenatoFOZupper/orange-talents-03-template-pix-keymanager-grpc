@@ -3,9 +3,9 @@ package br.com.zup.edu.pix.deleta
 import br.com.zup.edu.DeletaChavePixRequest
 import br.com.zup.edu.KeymanagerRemoveGrpcServiceGrpc
 import br.com.zup.edu.integrations.itau.ContasDeClientesNoItauClient
-import br.com.zup.edu.integrations.itau.DadosDaContaResponse
-import br.com.zup.edu.integrations.itau.InstituicaoResponse
-import br.com.zup.edu.integrations.itau.TitularResponse
+import br.com.zup.edu.integrations.itau.responses.DadosDaContaResponse
+import br.com.zup.edu.integrations.itau.responses.InstituicaoResponse
+import br.com.zup.edu.integrations.itau.responses.TitularResponse
 import br.com.zup.edu.pix.*
 import io.grpc.Channel
 import io.grpc.Status

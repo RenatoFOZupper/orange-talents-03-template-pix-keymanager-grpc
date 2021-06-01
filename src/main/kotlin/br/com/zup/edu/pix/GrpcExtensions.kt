@@ -29,3 +29,21 @@ fun DeletaChavePixRequest.toDelete(): DeletaChavePix {
         clienteId = clientId
     )
 }
+
+//fun ChavePix.toModelBacen() : CreatePixKeyRequest {
+//    return CreatePixKeyRequest(
+//        keyType = this.tipoChave.converte(),
+//        key = this.chave,
+//        bankAccount = BankAccountResponse(
+//            participant = "60701190",
+//            branch = this.conta.agencia,
+//            accountNumber = this.conta.numeroDaConta,
+//            accountType = this.tipoConta.converteTipoContaBacen()
+//        ),
+//        owner = OwnerResponse(
+//            type = TipoPessoa.NATURAL_PERSON,
+//            name = this.conta.nomeDoTitular,
+//            taxIdNumber = this.conta.cpfDoTitular
+//        )
+//    )
+//}

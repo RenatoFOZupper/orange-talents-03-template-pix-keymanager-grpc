@@ -38,6 +38,23 @@ class ChavePix(
     @GeneratedValue
     val id: UUID? = null
 
+    @Column(nullable = false)
     val criadaEm: LocalDateTime = LocalDateTime.now()
+
+
+
+
+    fun update(chave: String): Boolean {
+        if (tipoChave == TipoChave.CHAVE_ALEATORIA) {
+            this.chave = chave
+            return true
+        }
+        return false
+    }
+
+    override fun toString(): String {
+        return "ChavePix(clienteId=$clienteId, tipoChave=$tipoChave, chave='$chave', tipoConta=$tipoConta," +
+                " conta=$conta, id=$id, criadaEm=$criadaEm)"
+    }
 
 }

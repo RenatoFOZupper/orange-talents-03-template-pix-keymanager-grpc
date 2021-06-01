@@ -5,9 +5,9 @@ import br.com.zup.edu.RegistraChavePixRequest
 import br.com.zup.edu.TipoChave
 import br.com.zup.edu.TipoConta
 import br.com.zup.edu.integrations.itau.ContasDeClientesNoItauClient
-import br.com.zup.edu.integrations.itau.DadosDaContaResponse
-import br.com.zup.edu.integrations.itau.InstituicaoResponse
-import br.com.zup.edu.integrations.itau.TitularResponse
+import br.com.zup.edu.integrations.itau.responses.DadosDaContaResponse
+import br.com.zup.edu.integrations.itau.responses.InstituicaoResponse
+import br.com.zup.edu.integrations.itau.responses.TitularResponse
 import br.com.zup.edu.pix.*
 import io.grpc.Channel
 import io.grpc.Status
