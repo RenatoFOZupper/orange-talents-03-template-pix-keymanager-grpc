@@ -38,6 +38,7 @@ open class DeletaChavePixService(@Inject val repository: ChavePixRepository,
         val chavePixItau = repository.findByIdAndClienteId(requestChavePixId, requestClienteId)
             .orElseThrow { ChavePixNaoIdentificadaException("Chave pix não encontrada ou não pertence ao cliente")}
 
+
         //3. Faz a exclusão da chave no sistema Itau
         repository.delete(chavePixItau)
 
@@ -49,7 +50,7 @@ open class DeletaChavePixService(@Inject val repository: ChavePixRepository,
         if (response.status != HttpStatus.OK) {
             throw IllegalStateException("Erro ao deletar chave Pix no Banco Central do Brasil")
         }
-        
+
     }
 
 }

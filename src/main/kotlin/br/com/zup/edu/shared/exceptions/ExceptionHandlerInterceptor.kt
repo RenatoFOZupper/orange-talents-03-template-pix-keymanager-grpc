@@ -37,6 +37,8 @@ class ExceptionHandlerInterceptor : MethodInterceptor<NovaChavePixEndpoint, Any?
                                                                             .withCause(e.cause).asRuntimeException()
                 is StatusRuntimeException -> Status.NOT_FOUND.withDescription(e.message)
                                                                             .asRuntimeException()
+                is ChavePixNaoIdentificadaException -> Status.NOT_FOUND.withDescription(e.message)
+                                                                            .withCause(e.cause).asRuntimeException()
                 is ConstraintViolationException -> HandleConstraintViolationException(e)
                 else -> Status.UNKNOWN.withDescription("unexpected error happened")
                                                                             .withCause(e.cause).asRuntimeException()

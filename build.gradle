@@ -40,8 +40,8 @@ dependencies {
     runtimeOnly("com.fasterxml.jackson.module:jackson-module-kotlin")
     runtimeOnly("org.postgresql:postgresql")
 
-    testImplementation("io.micronaut:micronaut-http-client")
-    testImplementation("com.h2database:h2:1.4.200")
+
+
 
     //JPA
     runtime("io.micronaut.sql:micronaut-jdbc-hikari")
@@ -54,6 +54,8 @@ dependencies {
 
     testImplementation("com.h2database:h2")
     testImplementation("org.mockito:mockito-core")
+    testImplementation("io.micronaut:micronaut-http-client")
+    testImplementation("org.hamcrest:hamcrest-core:2.2")
 
 }
 

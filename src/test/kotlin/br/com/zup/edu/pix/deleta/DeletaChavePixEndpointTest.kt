@@ -2,6 +2,9 @@ package br.com.zup.edu.pix.deleta
 
 import br.com.zup.edu.DeletaChavePixRequest
 import br.com.zup.edu.KeymanagerRemoveGrpcServiceGrpc
+import br.com.zup.edu.integrations.bacen.ContasDeClientesNoBacenClient
+import br.com.zup.edu.integrations.bacen.requests.DeletePixKeyRequest
+import br.com.zup.edu.integrations.bacen.responses.DeletePixKeyResponse
 import br.com.zup.edu.integrations.itau.ContasDeClientesNoItauClient
 import br.com.zup.edu.integrations.itau.responses.DadosDaContaResponse
 import br.com.zup.edu.integrations.itau.responses.InstituicaoResponse
@@ -13,14 +16,19 @@ import io.grpc.StatusRuntimeException
 import io.micronaut.context.annotation.Factory
 import io.micronaut.grpc.annotation.GrpcChannel
 import io.micronaut.grpc.server.GrpcServerChannel
+import io.micronaut.http.HttpResponse
+import io.micronaut.http.HttpStatus
 import io.micronaut.test.annotation.MockBean
 import io.micronaut.test.extensions.junit5.annotation.MicronautTest
 import org.junit.jupiter.api.AfterEach
-import org.junit.jupiter.api.Assertions.*
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
-import org.mockito.Mockito
+import org.mockito.Mockito.`when`
+import org.mockito.Mockito.mock
+import java.time.LocalDateTime
 import java.util.*
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -29,12 +37,23 @@ import javax.inject.Singleton
 internal class DeletaChavePixEndpointTest(@Inject val repository: ChavePixRepository,
                                           @Inject val grpcClient: KeymanagerRemoveGrpcServiceGrpc.KeymanagerRemoveGrpcServiceBlockingStub) {
 
+    /*
+  * 1. deve excluir uma chave pix com sucesso - Happy path - ok
+  * 2. nao deve deletar chave pix quando retornar erro do BacenClient - ok
+  * 3.
+  * 4. nao deve deletar chave pix quando nao consta registro da chave - ok
+  * 5. nao deve deletar chave pix com dados invalidos - ok
+  */
+
+
+    @Inject
+    lateinit var bacenClient: ContasDeClientesNoBacenClient
 
     lateinit var CHAVE_PIX: ChavePix
 
 
     @BeforeEach
-    fun setupUp() {
+    fun setup() {
         CHAVE_PIX = repository.save(ChavePix(
             clienteId = UUID.fromString("5260263c-a3c1-4727-ae32-3bdb2538841b"),
             tipoChave = TipoChave.CPF,
@@ -49,7 +68,7 @@ internal class DeletaChavePixEndpointTest(@Inject val repository: ChavePixReposi
             )
         )
         )
-        println("Salvo um registro de chave pix para cenario de teste")
+        println("Salva um registro de chave pix para cenario de teste")
     }
 
     @AfterEach
@@ -58,68 +77,102 @@ internal class DeletaChavePixEndpointTest(@Inject val repository: ChavePixReposi
     }
 
 
-    /*
-    * 1. Happy path - ok
-    * 2. nao deve deletar se nao for o cliente dono da chave - ok
-    * 3. dados invalidos - ok
-    *
-    */
-
-
     @Test
-    fun `deve excluir uma chave com sucesso`() {
+    fun `deve excluir uma chave pix com sucesso`() {
+
         //cenario
-
         val pixId = UUID.fromString(CHAVE_PIX.id.toString())
-        val clienteId = UUID.fromString(CHAVE_PIX.clienteId.toString())
+        val clienteId = CHAVE_PIX.clienteId.toString()
 
+        `when`(bacenClient.deletaChavePix(CHAVE_PIX.chave, DeletePixKeyRequest(key = CHAVE_PIX.chave,
+            participant = "60701190"))).thenReturn(HttpResponse.ok())
 
         //acao
         val response = grpcClient.deleta(DeletaChavePixRequest.newBuilder()
-            .setPixId(pixId.toString())
-            .setClientId(clienteId.toString())
-            .build())
+                                                                .setPixId(pixId.toString())
+                                                                .setClientId(clienteId)
+                                                                .build())
 
 
         //validacao
-        with(response) {
-            assertFalse(repository.existsById(pixId))
-            assertTrue(repository.findAll().size < 1)
-            assertEquals("Chave ${pixId.toString()} excluída com sucesso!", messagem)
-            assertEquals(CHAVE_PIX.id, pixId)
-            assertEquals(CHAVE_PIX.clienteId, clienteId)
-        }
-
+        assertEquals("Chave $pixId excluída com sucesso!" ,response.messagem)
+        assertTrue(repository.count() == 0L)
     }
 
     @Test
-    fun `nao deve deletar se nao for o cliente dono da chave`() {
+    fun `nao deve deletar chave pix quando retornar erro do BacenClient`() {
 
         //cenario
 
-        val pixId = UUID.fromString(CHAVE_PIX.id.toString())
-        val clienteId = "2ac09233-21b2-4276-84fb-d83dbd9f8bab"
-
+        `when`(bacenClient.deletaChavePix(CHAVE_PIX.chave, DeletePixKeyRequest(key = CHAVE_PIX.chave,
+            participant = "60701190"))).thenReturn(HttpResponse.unprocessableEntity())
 
         //acao
         val response = assertThrows<StatusRuntimeException> {
             grpcClient.deleta(DeletaChavePixRequest.newBuilder()
-                .setPixId(pixId.toString())
-                .setClientId(clienteId)
+                .setPixId(CHAVE_PIX.id.toString())
+                .setClientId(CHAVE_PIX.clienteId.toString())
                 .build())
         }
 
 
         //validacao
         with(response) {
-            assertEquals(Status.NOT_FOUND.code, status.code)
-            assertEquals(Status.NOT_FOUND.cause, status.cause)
+            assertEquals(Status.FAILED_PRECONDITION.code, status.code)
+            assertEquals(Status.FAILED_PRECONDITION.cause, status.cause)
+            assertEquals("Erro ao deletar chave Pix no Banco Central do Brasil", status.description)
+        }
+    }
+
+    @Test
+    fun `nao deve deletar chave pix quando chave pertence a outro cliente`() {
+
+        //cenario
+        val outroClienteId = UUID.randomUUID().toString()
+
+
+        //acao
+        val response = assertThrows<StatusRuntimeException> {
+            grpcClient.deleta(DeletaChavePixRequest.newBuilder()
+                                                    .setPixId(CHAVE_PIX.chave)
+                                                    .setClientId("5260263c-a3c1-4727-ae32-3bdb2538841b")
+                                                    .build())
+        }
+
+        //validacao
+        with(response) {
+            assertEquals(Status.INVALID_ARGUMENT.code, status.code)
         }
 
     }
 
+
     @Test
-    fun `nao deve deletar com dados invalidos`() {
+    fun `nao deve deletar chave pix quando nao consta registro da chave`() {
+
+        //cenario
+        val pixIdInexistente = UUID.randomUUID().toString()
+
+
+        //acao
+        val response = assertThrows<StatusRuntimeException> {
+            grpcClient.deleta(DeletaChavePixRequest.newBuilder()
+                .setPixId(pixIdInexistente)
+                .setClientId(CHAVE_PIX.clienteId.toString())
+                .build())
+        }
+
+        //validacao
+        with(response) {
+            assertEquals("Chave pix não encontrada ou não pertence ao cliente", status.description)
+            assertEquals(Status.NOT_FOUND.code, status.code)
+        }
+
+    }
+
+
+    @Test
+    fun `nao deve deletar chave pix com dados invalidos`() {
         //cenario
         val pixId = ""
         val clienteId = ""
@@ -127,8 +180,6 @@ internal class DeletaChavePixEndpointTest(@Inject val repository: ChavePixReposi
         //acao
         val response = assertThrows<StatusRuntimeException> {
             grpcClient.deleta(DeletaChavePixRequest.newBuilder()
-                .setPixId(pixId)
-                .setClientId(clienteId)
                 .build())
         }
 
@@ -137,8 +188,10 @@ internal class DeletaChavePixEndpointTest(@Inject val repository: ChavePixReposi
         with(response) {
             assertEquals(Status.INVALID_ARGUMENT.code, status.code)
         }
-
     }
+
+
+
 
 
 
@@ -154,19 +207,32 @@ internal class DeletaChavePixEndpointTest(@Inject val repository: ChavePixReposi
         )
     }
 
+    private fun deleteChavePixBacenResponse(): DeletePixKeyResponse {
+        return DeletePixKeyResponse(
+            key = CHAVE_PIX.chave,
+            participant = CHAVE_PIX.conta.instituicao,
+            deletedAt = LocalDateTime.now().toString()
+        )
+    }
+
 
 
 
     @MockBean(ContasDeClientesNoItauClient::class)
     fun itauErpClient(): ContasDeClientesNoItauClient {
-        return Mockito.mock(ContasDeClientesNoItauClient::class.java)
+        return mock(ContasDeClientesNoItauClient::class.java)
+    }
+
+    @MockBean(ContasDeClientesNoBacenClient::class)
+    fun bacenClient(): ContasDeClientesNoBacenClient {
+        return mock(ContasDeClientesNoBacenClient::class.java)
     }
 
     @Factory
     class ClientsFactory {
 
         @Singleton
-        fun stub(@GrpcChannel(GrpcServerChannel.NAME) channel: Channel): KeymanagerRemoveGrpcServiceGrpc.KeymanagerRemoveGrpcServiceBlockingStub{
+        fun stub(@GrpcChannel(GrpcServerChannel.NAME) channel: Channel): KeymanagerRemoveGrpcServiceGrpc.KeymanagerRemoveGrpcServiceBlockingStub? {
             return KeymanagerRemoveGrpcServiceGrpc.newBlockingStub(channel)
         }
 
